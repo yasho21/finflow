@@ -1,3 +1,5 @@
+import { mockTransactions } from './src/data/mockTransactions'
+
 export default function Home() {
   return (
     <div className="flex h-screen bg-gray-50">
@@ -31,7 +33,16 @@ export default function Home() {
         {/* Content */}
         <main className="flex-1 overflow-y-auto p-8">
           <div className="text-gray-400 text-sm">
-            Dashboard content will go here.
+            <div className="space-y-2">
+            {mockTransactions.map(tx => (
+    <div key={tx.id} className="bg-white p-4 rounded-lg border border-gray-200 flex justify-between">
+      <span className="text-gray-900">{tx.description}</span>
+      <span className={tx.type === 'income' ? 'text-green-600' : 'text-gray-600'}>
+        {tx.type === 'income' ? '+' : '-'}${tx.amount.toFixed(2)}
+      </span>
+    </div>
+  ))}
+</div>
           </div>
         </main>
       </div>
