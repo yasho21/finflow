@@ -1,4 +1,4 @@
-import { mockTransactions } from './src/data/mockTransactions'
+import { mockTransactions } from '@/data/mockTransactions'
 
 export default function Home() {
   return (
