@@ -1,20 +1,26 @@
 export type TransactionType = 'income' | 'expense'
 
-export type Category =
-  | 'Salary'
-  | 'Food'
-  | 'Transport'
-  | 'Shopping'
-  | 'Bills'
-  | 'Entertainment'
-  | 'Health'
-  | 'Other'
+export enum TransactionTypeENUM {
+ income= 'income' ,
+ expense= 'expense'
+}
+
+export enum Category {
+   Salary='Salary',
+   Food='Food',
+   Transport='Transport',
+   Shopping='Shopping',
+   Bills='Bills',
+  Entertainment= 'Entertainment',
+   Health='Health',
+   Other='Other'
+}
 
 export type Transaction = {
   id: string
   description: string
   amount: number
-  type: TransactionType
+  type: TransactionTypeENUM
   category: Category
   date: string // ISO format: "2026-08-05"
 }

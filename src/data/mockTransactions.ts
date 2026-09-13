@@ -12,3 +12,5 @@ export const mockTransactions: Transaction[] = [
   { id: '9', description: 'Gas station', amount: 52.3, type: 'expense', category: 'Transport', date: '2026-08-06' },
   { id: '10', description: 'Restaurant dinner', amount: 78.4, type: 'expense', category: 'Food', date: '2026-08-07' },
 ]
+
+
