@@ -1,23 +1,19 @@
 "use client";
-import { mockTransactions } from "@/data/mockTransactions";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
-import { startTransition, useEffect, useState } from "react";
-import { Transaction } from "@/types";
-import { error } from "console";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { TransactionSchema, transactionToAdd } from "@/transactionschema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTransactions } from "@/data/useTransactions";
 import { useDeleteTransactions } from "@/data/useDeleteTransactions";
-import { url } from "inspector";
+import { Transaction } from "@/types";
+import { useAddTransactions } from "@/data/useAddTransactions";
+import { UpdateTransactionInput,useUpdateTransactions } from "@/data/useUpdateTransactions";
 
 export default function Home() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<transactionToAdd>({
     resolver: zodResolver(TransactionSchema),
@@ -36,52 +32,37 @@ export default function Home() {
   };
   const [isPosting, setisPosting] = useState(false);
   const [isModal, setIsModal] = useState(false);
+  const [editing, setEditing] = useState<Transaction | null>(null);
 
   const {
     data: transactions,
-  isPending:loading,
-  isError:loadingError,
-  error:ferror,
+    isPending: loading,
+    isError: loadingError,
+    error: ferror,
   } = useTransactions();
 
-  const {
-    mutate,
-    isPending,
-    isError,
-    error
-  }=useDeleteTransactions();
+  const deleteTransactions = useDeleteTransactions();
 
+  const editTransactions = useUpdateTransactions();
 
+  const addTransactions = useAddTransactions();
 
-  const onDelete = async (id: string) => {
-    console.log(id);
-    await fetch("/api/transaction/" + id, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-    });
+  const onEdit = () => {
+    setIsModal((prev) => !prev);
+    reset();
   };
 
   const onSubmit = async (data: transactionToAdd) => {
-    console.log("Registration Data:", data);
-    setisPosting(true);
-    await fetch("api/transaction", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Something went wrong");
-        }
-        return res.json();
-      })
-      // .then((json) => setTransactions((prev) => [...prev, json.data]))
-      .catch((error) => console.error(error))
-      .finally(() => setisPosting(false));
-
+    if(editing){
+      editTransactions.mutate({...data,id:editing.id});
+    }
+    else{
+      addTransactions.mutate(data);
+    }
+    
   };
-if (loading) return <p>Loading…</p>;
-if (isError) return <p>{"Failed"}</p>;
+  if (loading) return <p>Loading…</p>;
+  if (loadingError) return <p>{"Failed"}</p>;
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
@@ -106,7 +87,9 @@ if (isError) return <p>{"Failed"}</p>;
           <div className="flex items-center gap-3">
             <button
               onClick={() => {
-                setIsModal((prev) => !prev);
+                setIsModal(true);
+                reset();
+                setEditing(null);
               }}
             >
               Add Transaction
@@ -118,8 +101,7 @@ if (isError) return <p>{"Failed"}</p>;
           </div>
         </header>
         {/* Content */}
-      
-        
+
         <main className="flex-1 overflow-y-auto p-8">
           <div className="space-y-2">
             {transactions.map((tx) => (
@@ -137,7 +119,17 @@ if (isError) return <p>{"Failed"}</p>;
                 </span>
                 <button
                   className="text-gray-400 hover:text-red-500 text-sm"
-                  onClick={() => mutate(tx.id)}
+                  onClick={() => {
+                    setEditing(tx);
+                    reset(tx);
+                    setIsModal(true);
+                  }}
+                >
+                  Edit
+                </button>
+                <button
+                  className="text-gray-400 hover:text-red-500 text-sm"
+                  onClick={() => deleteTransactions.mutate(tx.id)}
                 >
                   Delete
                 </button>
@@ -156,7 +148,7 @@ if (isError) return <p>{"Failed"}</p>;
               <input
                 type="number"
                 placeholder="amount"
-                {...register("amount")}
+                {...register("amount",{valueAsNumber:true})}
                 style={{ border: "1px solid black" }}
               ></input>
               {errors.amount && <p>{errors.amount.message}</p>}
