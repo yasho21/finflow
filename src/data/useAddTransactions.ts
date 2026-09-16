@@ -3,6 +3,8 @@ import { Transaction } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type AddTransactionOutput = { data: Transaction };
+type ZodIssue = { path: (string | number)[]; message: string };
+type AddTransactionError = { success: false; message: ZodIssue[] };
 
 async function addTransaction(body: transactionToAdd): Promise<Transaction> {
   const res = await fetch("/api/transaction", {
@@ -11,8 +13,8 @@ async function addTransaction(body: transactionToAdd): Promise<Transaction> {
     body: JSON.stringify(body),
   });
   if (!res.ok) {
-    const err=await res.json();
-    throw new Error(err.message.map((i)=>i.message.join(",")));
+    const err: AddTransactionError = await res.json();
+    throw new Error(err.message.map((i) => i.message).join(", "));
   }
   const json: AddTransactionOutput = await res.json();
   return json.data;
