@@ -1,0 +1,323 @@
+{
+  "schemaVersion": "1",
+  "targetFamily": "sql",
+  "target": "postgres",
+  "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
+  "roots": {
+    "transaction": {
+      "model": "Transaction",
+      "namespace": "public"
+    }
+  },
+  "domain": {
+    "namespaces": {
+      "public": {
+        "enum": {
+          "CategoryTypeEnum": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "Salary",
+                "value": "Salary"
+              },
+              {
+                "name": "Food",
+                "value": "Food"
+              },
+              {
+                "name": "Transport",
+                "value": "Transport"
+              },
+              {
+                "name": "Shopping",
+                "value": "Shopping"
+              },
+              {
+                "name": "Bills",
+                "value": "Bills"
+              },
+              {
+                "name": "Entertainment",
+                "value": "Entertainment"
+              },
+              {
+                "name": "Health",
+                "value": "Health"
+              },
+              {
+                "name": "Other",
+                "value": "Other"
+              }
+            ]
+          },
+          "TransactionTypeENUMPrisma": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "income",
+                "value": "income"
+              },
+              {
+                "name": "expense",
+                "value": "expense"
+              }
+            ]
+          }
+        },
+        "models": {
+          "Transaction": {
+            "fields": {
+              "amount": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/numeric@1",
+                  "kind": "scalar"
+                }
+              },
+              "category": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "CategoryTypeEnum",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "date": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "description": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "TransactionTypeENUMPrisma",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "amount": {
+                  "column": "amount"
+                },
+                "category": {
+                  "column": "category"
+                },
+                "date": {
+                  "column": "date"
+                },
+                "description": {
+                  "column": "description"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "type": {
+                  "column": "type"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "transaction"
+            }
+          }
+        }
+      }
+    }
+  },
+  "storage": {
+    "namespaces": {
+      "public": {
+        "entries": {
+          "table": {
+            "transaction": {
+              "checks": [
+                {
+                  "expression": "\"category\" IN ('Salary', 'Food', 'Transport', 'Shopping', 'Bills', 'Entertainment', 'Health', 'Other')",
+                  "name": "transaction_category_check_d85cfdba",
+                  "prefix": "transaction_category_check"
+                },
+                {
+                  "expression": "\"type\" IN ('income', 'expense')",
+                  "name": "transaction_type_check_ed5a0d5a",
+                  "prefix": "transaction_type_check"
+                }
+              ],
+              "columns": {
+                "amount": {
+                  "codecId": "pg/numeric@1",
+                  "nativeType": "numeric",
+                  "nullable": false
+                },
+                "category": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "CategoryTypeEnum",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "date": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "description": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "type": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "TransactionTypeENUMPrisma",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "userId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [
+                {
+                  "columns": [
+                    "userId"
+                  ],
+                  "name": "transaction_userId_idx_a489d58a",
+                  "prefix": "transaction_userId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            }
+          },
+          "valueSet": {
+            "CategoryTypeEnum": {
+              "kind": "valueSet",
+              "values": [
+                "Salary",
+                "Food",
+                "Transport",
+                "Shopping",
+                "Bills",
+                "Entertainment",
+                "Health",
+                "Other"
+              ]
+            },
+            "TransactionTypeENUMPrisma": {
+              "kind": "valueSet",
+              "values": [
+                "income",
+                "expense"
+              ]
+            }
+          }
+        },
+        "id": "public",
+        "kind": "postgres-schema"
+      }
+    },
+    "storageHash": "acd87359a4504a8b36cddc45bd0ac416c6089c43b2d424d579b017577c3ff5ec"
+  },
+  "execution": {
+    "executionHash": "64032fc5f21583b9ee09cf2090ec9967c0b1aea7899844fd2973d5b5b3fdcfcf",
+    "mutations": {
+      "defaults": [
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "transaction"
+          }
+        }
+      ]
+    }
+  },
+  "capabilities": {
+    "postgres": {
+      "distinctOn": true,
+      "jsonAgg": true,
+      "lateral": true,
+      "limit": true,
+      "orderBy": true,
+      "returning": true
+    },
+    "sql": {
+      "checkConstraint": true,
+      "defaultInInsert": true,
+      "enums": true,
+      "lateral": true,
+      "returning": true,
+      "scalarList": true
+    }
+  },
+  "extensions": {},
+  "meta": {},
+  "_generated": {
+    "warning": "⚠️  GENERATED FILE - DO NOT EDIT",
+    "message": "This file is automatically generated by \"prisma contract emit\".",
+    "regenerate": "To regenerate, run: prisma contract emit"
+  }
+}

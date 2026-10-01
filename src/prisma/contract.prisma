@@ -1,0 +1,28 @@
+// use prisma-8
+enum TransactionTypeENUMPrisma {
+  income
+  expense
+}
+
+enum CategoryTypeEnum {
+  Salary
+  Food
+  Transport
+  Shopping
+  Bills
+  Entertainment
+  Health
+  Other
+}
+
+model Transaction {
+  id          String                    @id @default(uuid())
+  amount      Decimal
+  type        TransactionTypeENUMPrisma
+  category    CategoryTypeEnum
+  date        String
+  description String
+  userId      String
+
+  @@index([userId])
+}

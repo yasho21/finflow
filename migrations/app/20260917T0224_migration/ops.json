@@ -1,0 +1,97 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.transaction",
+    "label": "Create table \"transaction\"",
+    "summary": "Creates table \"transaction\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "transaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"transaction\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"transaction\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"transaction\"",
+        "sql": "CREATE TABLE \"public\".\"transaction\" (\n  \"amount\" numeric NOT NULL,\n  \"category\" text NOT NULL,\n  \"date\" text NOT NULL,\n  \"description\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"type\" text NOT NULL,\n  \"userId\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"transaction_category_check_d85cfdba\" CHECK (\"category\" IN ('Salary', 'Food', 'Transport', 'Shopping', 'Bills', 'Entertainment', 'Health', 'Other')),\n  CONSTRAINT \"transaction_type_check_ed5a0d5a\" CHECK (\"type\" IN ('income', 'expense'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"transaction\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"transaction\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.transaction.transaction_userId_idx_a489d58a",
+    "label": "Create index \"transaction_userId_idx_a489d58a\" on \"transaction\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "transaction_userId_idx_a489d58a",
+        "table": "transaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"transaction_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"transaction_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"transaction_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"transaction_userId_idx_a489d58a\" ON \"public\".\"transaction\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"transaction_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"transaction_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  }
+]
