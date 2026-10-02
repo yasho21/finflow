@@ -20,7 +20,7 @@ async function onUpdate({
   if (!res.ok) {
     throw new Error("Failed to update");
   }
-  let json: UpdateTransactionOutput = await res.json();
+  const json: UpdateTransactionOutput = await res.json();
   return json.data;
 }
 

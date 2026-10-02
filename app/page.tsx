@@ -8,6 +8,7 @@ import { useDeleteTransactions } from "@/data/useDeleteTransactions";
 import { Transaction } from "@/types";
 import { useAddTransactions } from "@/data/useAddTransactions";
 import { UpdateTransactionInput,useUpdateTransactions } from "@/data/useUpdateTransactions";
+import { formatCurrency } from "@/lib/formatCurrency";
 
 export default function Home() {
   const {
@@ -115,7 +116,7 @@ export default function Home() {
                     tx.type === "income" ? "text-green-600" : "text-gray-600"
                   }
                 >
-                  {tx.type === "income" ? "+" : "-"}${tx.amount}
+                  {tx.type === "income" ? "+" : "-"}{formatCurrency(tx.amount)}
                 </span>
                 <button
                   className="text-gray-400 hover:text-red-500 text-sm"
