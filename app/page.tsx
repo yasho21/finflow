@@ -106,7 +106,9 @@ export default function Home() {
 
         <main className="flex-1 overflow-y-auto p-8">
           <div className="space-y-2">
-            {deleteTransactions.error && <p role="alert">{deleteTransactions.error.message}</p>}
+            {deleteTransactions.error && (
+              <p role="alert">{deleteTransactions.error.message}</p>
+            )}
             {transactions.map((tx) => (
               <div
                 key={tx.id}
@@ -141,7 +143,7 @@ export default function Home() {
             ))}
           </div>
           {isModal && (
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)} noValidate>
               <input
                 type="text"
                 placeholder="description"
@@ -151,10 +153,11 @@ export default function Home() {
               {errors.description && <p>{errors.description.message}</p>}
               <input
                 type="number"
+                step="0.01"
+                min="0.01"
                 placeholder="amount"
                 {...register("amount", { valueAsNumber: true })}
-                style={{ border: "1px solid black" }}
-              ></input>
+              />
               {errors.amount && <p>{errors.amount.message}</p>}
               <input
                 type="text"
