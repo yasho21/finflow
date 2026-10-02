@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "FinFlow",
-  description: "A personal project for personal finances",
+  description: "ersonal finance dashboard built with Next.js, TypeScript, TanStack Query and Zod.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

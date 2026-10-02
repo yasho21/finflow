@@ -7,7 +7,10 @@ import { useTransactions } from "@/data/useTransactions";
 import { useDeleteTransactions } from "@/data/useDeleteTransactions";
 import { Transaction } from "@/types";
 import { useAddTransactions } from "@/data/useAddTransactions";
-import { UpdateTransactionInput,useUpdateTransactions } from "@/data/useUpdateTransactions";
+import {
+  UpdateTransactionInput,
+  useUpdateTransactions,
+} from "@/data/useUpdateTransactions";
 import { formatCurrency } from "@/lib/formatCurrency";
 
 export default function Home() {
@@ -20,18 +23,6 @@ export default function Home() {
     resolver: zodResolver(TransactionSchema),
   });
 
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 400,
-    bgcolor: "background.paper",
-    border: "2px solid #000",
-    boxShadow: 24,
-    p: 4,
-  };
-  const [isPosting, setisPosting] = useState(false);
   const [isModal, setIsModal] = useState(false);
   const [editing, setEditing] = useState<Transaction | null>(null);
 
@@ -53,15 +44,25 @@ export default function Home() {
     reset();
   };
 
-  const onSubmit = async (data: transactionToAdd) => {
-    if(editing){
-      editTransactions.mutate({...data,id:editing.id});
+  const onSubmit = (data: transactionToAdd) => {
+    const closeForm = () => {
+      setIsModal(false);
+      setEditing(null);
+      reset();
+    };
+
+    if (editing) {
+      editTransactions.mutate(
+        { ...data, id: editing.id },
+        { onSuccess: closeForm },
+      );
+    } else {
+      addTransactions.mutate(data, { onSuccess: closeForm });
     }
-    else{
-      addTransactions.mutate(data);
-    }
-    
   };
+
+  const isSaving = addTransactions.isPending || editTransactions.isPending;
+  const saveError = addTransactions.error ?? editTransactions.error;
   if (loading) return <p>Loading…</p>;
   if (loadingError) return <p>{"Failed"}</p>;
   return (
@@ -105,6 +106,7 @@ export default function Home() {
 
         <main className="flex-1 overflow-y-auto p-8">
           <div className="space-y-2">
+            {deleteTransactions.error && <p role="alert">{deleteTransactions.error.message}</p>}
             {transactions.map((tx) => (
               <div
                 key={tx.id}
@@ -116,7 +118,8 @@ export default function Home() {
                     tx.type === "income" ? "text-green-600" : "text-gray-600"
                   }
                 >
-                  {tx.type === "income" ? "+" : "-"}{formatCurrency(tx.amount)}
+                  {tx.type === "income" ? "+" : "-"}
+                  {formatCurrency(tx.amount)}
                 </span>
                 <button
                   className="text-gray-400 hover:text-red-500 text-sm"
@@ -149,7 +152,7 @@ export default function Home() {
               <input
                 type="number"
                 placeholder="amount"
-                {...register("amount",{valueAsNumber:true})}
+                {...register("amount", { valueAsNumber: true })}
                 style={{ border: "1px solid black" }}
               ></input>
               {errors.amount && <p>{errors.amount.message}</p>}
@@ -175,11 +178,10 @@ export default function Home() {
               ></input>
               {errors.date && <p>{errors.date.message}</p>}
               {/* <input type="text" placeholder="id" {...register("description")} style={{border:"1px solid black"}}></input> */}
-              {!isPosting && (
-                <button type="submit" style={{ border: "1px solid black" }}>
-                  Submit
-                </button>
-              )}
+              {saveError && <p role="alert">{saveError.message}</p>}
+              <button type="submit" disabled={isSaving}>
+                {isSaving ? "Saving…" : "Save"}
+              </button>
             </form>
           )}
         </main>
